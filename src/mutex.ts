@@ -3,6 +3,12 @@ export class Mutex {
   private resolver?: () => void;
   private rejector?: (reason?: any) => void;
 
+  constructor(isLocked?: boolean) {
+    if (isLocked) {
+      this.lock();
+    }
+  }
+
   isLocked(): boolean {
     return Boolean(this.promise);
   }
