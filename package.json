@@ -1,7 +1,7 @@
 {
   "name": "@mnasyrov/mutex",
   "description": "Mutex for Promises",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "author": {
     "name": "Mikhail Nasyrov",
