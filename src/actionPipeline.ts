@@ -19,7 +19,7 @@ export class ActionPipeline<T> {
     this.maxCapacity = maxCapacity;
   }
 
-  get isBusy(): boolean {
+  isBusy(): boolean {
     return this._isBusy;
   }
 

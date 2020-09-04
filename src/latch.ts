@@ -22,7 +22,7 @@ export class Latch<T> {
     return latch;
   }
 
-  get isPending(): boolean {
+  isPending(): boolean {
     return this._isPending;
   }
 
