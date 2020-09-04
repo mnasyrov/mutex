@@ -1,0 +1,82 @@
+{
+  "name": "@mnasyrov/mutex",
+  "description": "Mutex for Promises",
+  "version": "0.0.1",
+  "license": "MIT",
+  "author": {
+    "name": "Mikhail Nasyrov",
+    "email": "mikhail@mnasyrov.com",
+    "url": "https://github.com/mnasyrov"
+  },
+  "homepage": "https://github.com/mnasyrov/mutex",
+  "bugs": "https://github.com/mnasyrov/mutex/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mnasyrov/mutex.git"
+  },
+  "keywords": [
+    "promise",
+    "mutex",
+    "latch"
+  ],
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.module.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "clean": "rimraf dist",
+    "lint": "npm-run-all lint:*",
+    "lint:eslint": "eslint src",
+    "lint:tsc": "tsc --noEmit",
+    "test": "jest",
+    "build": "npm-run-all build:*",
+    "build:bundle": "parcel build --target main --target module src/index.ts",
+    "build:types": "tsc --emitDeclarationOnly",
+    "preversion": "npm-run-all -s lint test",
+    "postversion": "npm run release",
+    "prerelease": "npm-run-all -s clean build",
+    "release": "npm publish --access public"
+  },
+  "devDependencies": {
+    "@types/jest": "26.0.13",
+    "@typescript-eslint/eslint-plugin": "4.0.1",
+    "@typescript-eslint/parser": "4.0.1",
+    "cz-conventional-changelog": "3.3.0",
+    "eslint": "7.8.1",
+    "husky": "4.2.5",
+    "jest": "26.4.2",
+    "npm-run-all": "4.1.5",
+    "parcel": "2.0.0-beta.1",
+    "prettier": "2.1.1",
+    "rimraf": "3.0.2",
+    "ts-jest": "26.3.0",
+    "typescript": "4.0.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts}": [
+      "eslint --fix",
+      "prettier --write",
+      "git add"
+    ],
+    "*.{ts,css,json,md,html}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
