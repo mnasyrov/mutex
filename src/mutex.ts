@@ -1,35 +1,29 @@
 export class Mutex {
-  private latchPromise: Promise<void> | void = undefined;
-  private latchResolver: (() => void) | void = undefined;
-  private latchRejector: ((reason?: any) => void) | void = undefined;
+  private promise?: Promise<void>;
+  private resolver?: () => void;
+  private rejector?: (reason?: any) => void;
 
   get isLocked(): boolean {
-    return !!this.latchPromise;
-  }
-
-  async waitRelease() {
-    if (this.latchPromise) {
-      await this.latchPromise;
-    }
+    return Boolean(this.promise);
   }
 
   async lock() {
     // Inline waitRelease
-    if (this.latchPromise) {
-      await this.latchPromise;
+    if (this.promise) {
+      await this.promise;
     }
 
-    if (!this.latchPromise) {
-      this.latchPromise = new Promise<void>((resolver, rejector) => {
-        this.latchResolver = resolver;
-        this.latchRejector = rejector;
+    if (!this.promise) {
+      this.promise = new Promise<void>((resolver, rejector) => {
+        this.resolver = resolver;
+        this.rejector = rejector;
       });
     }
   }
 
   release() {
-    if (this.latchPromise) {
-      const currentResolver = this.latchResolver;
+    if (this.promise) {
+      const currentResolver = this.resolver;
       this.clearState();
 
       if (currentResolver) {
@@ -39,8 +33,8 @@ export class Mutex {
   }
 
   reject(reason?: any) {
-    if (this.latchPromise) {
-      const currentRejector = this.latchRejector;
+    if (this.promise) {
+      const currentRejector = this.rejector;
       this.clearState();
 
       if (currentRejector) {
@@ -49,9 +43,15 @@ export class Mutex {
     }
   }
 
+  async wait() {
+    if (this.promise) {
+      await this.promise;
+    }
+  }
+
   private clearState() {
-    this.latchPromise = undefined;
-    this.latchResolver = undefined;
-    this.latchRejector = undefined;
+    this.promise = undefined;
+    this.resolver = undefined;
+    this.rejector = undefined;
   }
 }

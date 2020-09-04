@@ -1,28 +1,29 @@
-type Resolver<T> = (value?: T | PromiseLike<T>) => void;
-type Rejector = (reason?: any) => void;
-
 export class Latch<T> {
-  private latchPromise: Promise<T>;
-  private latchResolver: Resolver<T> | void = undefined;
-  private latchRejector: Rejector | void = undefined;
+  private promise: Promise<T>;
+  private resolver?: (value?: T | PromiseLike<T>) => void;
+  private rejector?: (reason?: any) => void;
   private _isPending = true;
 
   constructor(private count: number = 1) {
-    this.latchPromise = new Promise<T>((resolver, rejector) => {
-      this.latchResolver = resolver;
-      this.latchRejector = rejector;
+    this.promise = new Promise<T>((resolver, rejector) => {
+      this.resolver = resolver;
+      this.rejector = rejector;
     });
+  }
+
+  static fromPromise<T>(source: PromiseLike<T>): Latch<T> {
+    const latch = new Latch<T>();
+
+    source.then(
+      (value) => latch.release(value),
+      (reason) => latch.reject(reason),
+    );
+
+    return latch;
   }
 
   get isPending(): boolean {
     return this._isPending;
-  }
-
-  followPromise(promise: PromiseLike<T>) {
-    promise.then(
-      (value) => this.release(value),
-      (reason) => this.reject(reason),
-    );
   }
 
   release(value: T | PromiseLike<T>) {
@@ -30,12 +31,12 @@ export class Latch<T> {
       this.count--;
       if (this.count <= 0) {
         this._isPending = false;
-        this.latchPromise = Promise.resolve<T>(value);
-        if (this.latchResolver) {
-          this.latchResolver(value);
+        this.promise = Promise.resolve<T>(value);
+        if (this.resolver) {
+          this.resolver(value);
         }
-        this.latchResolver = undefined;
-        this.latchRejector = undefined;
+        this.resolver = undefined;
+        this.rejector = undefined;
       }
     }
   }
@@ -43,15 +44,15 @@ export class Latch<T> {
   reject(reason?: any) {
     if (this._isPending) {
       this._isPending = false;
-      if (this.latchRejector) {
-        this.latchRejector(reason);
+      if (this.rejector) {
+        this.rejector(reason);
       }
-      this.latchResolver = undefined;
-      this.latchRejector = undefined;
+      this.resolver = undefined;
+      this.rejector = undefined;
     }
   }
 
   wait(): Promise<T> {
-    return this.latchPromise;
+    return this.promise;
   }
 }
