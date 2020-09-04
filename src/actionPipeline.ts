@@ -31,12 +31,12 @@ export class ActionPipeline<T> {
     return this.completePromise;
   }
 
-  execute(asyncAction: () => Promise<T>): Promise<T> {
+  execute(asyncAction: () => Promise<T>, forced?: boolean): Promise<T> {
     const isQueueExceeded: boolean =
       this.maxCapacity !== undefined &&
       this.queue.length + 1 >= this.maxCapacity;
 
-    if (isQueueExceeded && this.lastResultPromise) {
+    if (isQueueExceeded && this.lastResultPromise && !forced) {
       return this.lastResultPromise;
     }
 
