@@ -19,10 +19,14 @@
     "mutex",
     "latch"
   ],
+  "engines": {
+    "node": ">=10"
+  },
   "source": "src/index.ts",
-  "main": "dist/index.js",
-  "module": "dist/index.module.js",
-  "types": "dist/index.d.ts",
+  "typings": "dist/index.d.ts",
+  "main": "dist/mutex.js",
+  "module": "dist/mutex.esm.js",
+  "unpkg": "dist/mutex.umd.js",
   "files": [
     "dist",
     "src",
@@ -30,33 +34,37 @@
     "README.md"
   ],
   "scripts": {
+    "start": "microbundle watch",
     "clean": "rimraf dist",
     "lint": "npm-run-all lint:*",
     "lint:eslint": "eslint src",
     "lint:tsc": "tsc --noEmit",
     "test": "jest",
-    "build": "npm-run-all build:*",
-    "build:bundle": "parcel build --target main --target module src/index.ts",
-    "build:types": "tsc --emitDeclarationOnly",
+    "build": "microbundle build",
     "preversion": "npm-run-all -s lint test",
     "postversion": "npm run release",
     "prerelease": "npm-run-all -s clean build",
-    "release": "npm publish --access public"
+    "release": "npm publish --access public",
+    "prepare": "microbundle build"
   },
   "devDependencies": {
-    "@types/jest": "26.0.13",
-    "@typescript-eslint/eslint-plugin": "4.0.1",
-    "@typescript-eslint/parser": "4.0.1",
+    "@types/jest": "26.0.14",
+    "@size-limit/preset-small-lib": "4.6.0",
+    "@typescript-eslint/parser": "4.3.0",
+    "@typescript-eslint/eslint-plugin": "4.3.0",
     "cz-conventional-changelog": "3.3.0",
-    "eslint": "7.8.1",
-    "husky": "4.2.5",
+    "eslint": "7.10.0",
+    "husky": "4.3.0",
     "jest": "26.4.2",
+    "lint-staged": "10.4.0",
+    "microbundle": "0.12.4",
     "npm-run-all": "4.1.5",
-    "parcel": "2.0.0-beta.1",
-    "prettier": "2.1.1",
+    "prettier": "2.1.2",
     "rimraf": "3.0.2",
-    "ts-jest": "26.3.0",
-    "typescript": "4.0.2"
+    "size-limit": "4.6.0",
+    "tslib": "2.0.1",
+    "ts-jest": "26.4.1",
+    "typescript": "4.0.3"
   },
   "husky": {
     "hooks": {
