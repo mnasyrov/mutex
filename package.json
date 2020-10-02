@@ -43,7 +43,7 @@
     "build": "microbundle build",
     "preversion": "npm-run-all -s lint test",
     "postversion": "npm run release",
-    "prerelease": "npm-run-all -s clean build",
+    "prerelease": "npm run clean",
     "release": "npm publish --access public",
     "prepare": "microbundle build"
   },
